@@ -69,17 +69,6 @@ Vercel이 자동으로 Next.js 프로젝트를 감지합니다. 다음 설정을
 1. 프로젝트 설정 페이지에서 **"Environment Variables"** 탭 클릭
 2. 다음 환경 변수들을 하나씩 추가:
 
-```
-ADMIN_EMAILS=samsung200377@gmail.com
-
-NEXT_PUBLIC_SUPABASE_URL=https://kpziwjgjavvjwzvttqcn.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_4dS8R4IJX3MbJZUk8hlrkg_n5wYMD6d
-SUPABASE_SERVICE_ROLE_KEY=sb_secret_T_nSLYQIBnEF3DItKjZirw__u6tEoi_
-
-LLM_PROVIDER=gemini
-GEMINI_API_KEY=AIzaSyDsE6Zh3tnSQGovTuCD5PreRNaWMTpg5ws
-```
-
 **⚠️ 보안 주의사항:**
 - `SUPABASE_SERVICE_ROLE_KEY`는 절대 공개 저장소에 커밋하지 마세요!
 - `.env.local` 파일은 `.gitignore`에 포함되어 있어야 합니다
