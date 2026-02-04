@@ -232,4 +232,3 @@ DB 구조는 `supabase/migrations/` 안의 SQL 파일을 **번호 순서(001 →
 - **기능**: 파일 업로드 → 자동 요약, 검색, 카테고리·프로젝트·링크·그래프·비교, 이메일 가입·관리자 승인, 익명 로그인.
 - **구조**: App Router 기준으로 `app/`(페이지·API), `components/`, `lib/`(supabase, llm, utils), `types/`, `supabase/migrations/` 로 역할이 나뉘어 있음.
 - **코드 정리**: 서버에서 데이터·인증을 처리한 뒤 클라이언트에 초기값 전달. 상수·타입·인증은 `lib/utils`, `types` 에 모아 두고, Supabase 는 server / client / admin 세 가지 용도로 나누어 사용.
-
