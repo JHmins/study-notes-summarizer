@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 라이트 모드 — 모더니즘 · 세련됨 · 따뜻한 흰색 톤 */
+:root {
+  --background: #faf8f5;
+  --surface: #ffffff;
+  --surface-hover: #f5f2ed;
+  --border: #e8e4de;
+  --border-focus: #9c958c;
+  --foreground: #1c1917;
+  --foreground-muted: #57534e;
+  --foreground-subtle: #78716c;
+  --accent: #b45309;
+  --accent-hover: #92400e;
+  --accent-muted: rgba(180, 83, 9, 0.12);
+  --success: #15803d;
+  --success-muted: rgba(21, 128, 61, 0.12);
+  --warning: #a16207;
+  --warning-muted: rgba(161, 98, 7, 0.12);
+  --error: #b91c1c;
+  --error-muted: rgba(185, 28, 28, 0.12);
+  --radius: 0.75rem;
+  --shadow-sm: 0 1px 2px 0 rgb(28 25 23 / 0.04);
+  --shadow-card: 0 1px 3px 0 rgb(28 25 23 / 0.06), 0 1px 2px -1px rgb(28 25 23 / 0.04);
+  --shadow-card-hover: 0 4px 14px -2px rgb(28 25 23 / 0.08), 0 2px 6px -2px rgb(28 25 23 / 0.04);
+  --logo-bg: #faf8f5;
+  --logo-accent: #b45309;
+}
+
+/* 다크 모드 — 따뜻한 어두운 톤 유지 */
+html.dark {
+  --background: #0f0e0d;
+  --surface: #181615;
+  --surface-hover: #1f1d1b;
+  --border: #292524;
+  --border-focus: #44403c;
+  --foreground: #fafaf9;
+  --foreground-muted: #a8a29e;
+  --foreground-subtle: #78716c;
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --accent-muted: rgba(245, 158, 11, 0.14);
+  --success: #34d399;
+  --success-muted: rgba(52, 211, 153, 0.14);
+  --warning: #fbbf24;
+  --warning-muted: rgba(251, 191, 36, 0.12);
+  --error: #f87171;
+  --error-muted: rgba(248, 113, 113, 0.12);
+  --radius: 0.75rem;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.25);
+  --shadow-card-hover: 0 4px 14px -2px rgb(0 0 0 / 0.3);
+  --logo-bg: #181615;
+  --logo-accent: #f59e0b;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-feature-settings: "ss01", "ss02", "cv02", "cv04";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+}
+
+/* 읽기용 본문 스타일 */
+.reading-prose {
+  line-height: 1.75;
+  letter-spacing: -0.011em;
+}
+
+.reading-prose p {
+  margin-bottom: 1em;
+}
+
+.reading-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.reading-prose strong {
+  font-weight: 600;
+}
+
+/* 원본 텍스트 블록 */
+.origin-block {
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* 스크롤은 되지만 스크롤바 숨김 (캘린더 등) */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* 스크롤바 썸(아이콘)만 숨김 — 스크롤 기능은 유지, 전역 적용 */
+* {
+  scrollbar-color: transparent transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* 그래프 뷰 — 링크 그리기 애니메이션 */
+@keyframes drawLine {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+.graph-link-draw {
+  stroke-dasharray: 1;
+}
+
+/* 그래프 뷰 — 노드 등장 (opacity만, SVG 호환) */
+@keyframes graphNodeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 그래프 뷰 — 중앙 허브 숨결 (SVG 호환: opacity만) */
+@keyframes graphHubPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.88; }
+}
