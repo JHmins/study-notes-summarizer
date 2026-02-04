@@ -181,7 +181,7 @@ export default function GraphViewClient({
 
     noteList.forEach((note) => {
       const catId = note.category_id ?? '_none'
-      const catPos = getCatPos(note.category_id)
+      const catPos = getCatPos(note.category_id ?? null)
       const catNode = categoryNodes.find((n) => n.id === catId)
       const countInCat = noteList.filter((n) => (n.category_id ?? '_none') === catId).length
       const j = noteList.filter((n) => (n.category_id ?? '_none') === catId).findIndex((n) => n.id === note.id)

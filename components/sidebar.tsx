@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { format, startOfDay, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns'
 import { ko } from 'date-fns/locale/ko'
 import { toDateKey } from '@/lib/utils/format'
-import CalendarNotes, { type NoteForCalendar } from './calendar-notes'
-import SidebarCategories, { type Category } from './sidebar-categories'
+import type { Category, NoteForCalendar } from '@/types'
+import CalendarNotes from './calendar-notes'
+import SidebarCategories from './sidebar-categories'
 
 export interface SidebarNote extends NoteForCalendar {
   status: string

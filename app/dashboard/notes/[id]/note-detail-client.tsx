@@ -104,6 +104,7 @@ export default function NoteDetailClient({
   }
 
   const handleContentSave = async () => {
+    if (!note.file_path) return
     setSavingContent(true)
     const isMd = note.file_path.toLowerCase().endsWith('.md')
     const contentType = isMd ? 'text/markdown' : 'text/plain'
@@ -291,7 +292,7 @@ export default function NoteDetailClient({
               <p className="mt-2 text-sm text-[var(--foreground-subtle)]">
                 생성 {format(new Date(currentNote.created_at), 'yyyy.M.d HH:mm', { locale: ko })}
                 {currentNote.updated_at !== currentNote.created_at &&
-                  ` · 수정 ${format(new Date(currentNote.updated_at), 'yyyy.M.d HH:mm', { locale: ko })}`}
+                  ` · 수정 ${format(new Date(currentNote.updated_at ?? currentNote.created_at), 'yyyy.M.d HH:mm', { locale: ko })}`}
               </p>
               {categories.length > 0 && (
                 <div className="mt-2 flex items-center gap-2">

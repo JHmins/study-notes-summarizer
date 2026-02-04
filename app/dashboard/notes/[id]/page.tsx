@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdmin } from '@/lib/utils/auth'
+import type { Project } from '@/types'
 import NoteDetailClient from './note-detail-client'
 
 interface PageProps {
@@ -74,14 +75,14 @@ export default async function NoteDetailPage({ params }: PageProps) {
       .order('created_at', { ascending: false }),
     supabase
       .from('projects')
-      .select('id, name')
+      .select('id, user_id, name, description, created_at, updated_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: false }),
   ])
 
   const categories = categoriesResult.data ?? []
   const studyLinks = linksResult.data ?? []
-  const projects = projectsResult.data ?? []
+  const projects = (projectsResult.data ?? []) as Project[]
   const userIsAdmin = isAdmin(user?.email)
 
   return (

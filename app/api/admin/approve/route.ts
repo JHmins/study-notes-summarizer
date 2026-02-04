@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       .update({
         approved: true,
         approved_at: new Date().toISOString(),
-        approved_by: user.id,
+        approved_by: user?.id,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)

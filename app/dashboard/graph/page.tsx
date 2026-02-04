@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { isAdmin } from '@/lib/utils/auth'
+import type { Note, Category } from '@/types'
 import GraphViewClient from './graph-view-client'
 
 /** 본문/제목에서 그래프용 단어 추출 (2글자 이상, 상위 limit개) */
@@ -43,12 +44,12 @@ export default async function GraphViewPage() {
 
   const userId = user.id
   const [notesResult, categoriesResult] = await Promise.allSettled([
-    supabase.from('notes').select('id, title, created_at, category_id, status, file_path').eq('user_id', userId).order('created_at', { ascending: false }),
-    supabase.from('categories').select('id, name, sort_order').eq('user_id', userId).order('sort_order').order('created_at'),
+    supabase.from('notes').select('id, title, created_at, category_id, status, file_path, summary').eq('user_id', userId).order('created_at', { ascending: false }),
+    supabase.from('categories').select('id, user_id, name, sort_order, created_at').eq('user_id', userId).order('sort_order').order('created_at'),
   ])
 
-  const notes = (notesResult.status === 'fulfilled' ? (notesResult.value.data ?? []) : []) as { id: string; title: string; created_at: string; category_id: string | null; status: string; file_path?: string }[]
-  const categories = categoriesResult.status === 'fulfilled' ? (categoriesResult.value.data ?? []) : []
+  const notes = (notesResult.status === 'fulfilled' ? (notesResult.value.data ?? []) : []) as { id: string; title: string; created_at: string; category_id: string | null; status: string; file_path?: string; summary: string | null }[]
+  const categories = (categoriesResult.status === 'fulfilled' ? (categoriesResult.value.data ?? []) : []) as Category[]
 
   const dateKeys = [...new Set(notes.map((n) => n.created_at.slice(0, 10)))].sort()
   const noteWords: Record<string, string[]> = {}
@@ -78,7 +79,7 @@ export default async function GraphViewPage() {
   const userIsAdmin = isAdmin(user?.email)
   return (
     <GraphViewClient
-      notes={notes.map(({ file_path: _, ...r }) => r)}
+      notes={notes.map(({ file_path: _fp, ...r }) => r) as Note[]}
       categories={categories}
       userEmail={user?.email ?? '익명'}
         isAdmin={userIsAdmin}
