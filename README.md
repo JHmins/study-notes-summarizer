@@ -1,6 +1,6 @@
 # Study Notes Summarizer — 사이트 기능·구조·코드 정리
 
-web-study-notes-summarizer.vercel.app
+https://web-study-notes-summarizer.vercel.app
 
 이 문서는 현재 사이트의 **기능**, **구조**, **코드가 어떻게 나뉘고 정리되어 있는지**를 설명합니다.
 
