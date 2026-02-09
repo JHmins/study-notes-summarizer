@@ -12,18 +12,19 @@ https://web-study-notes-summarizer.vercel.app
 
 | 날짜 | 항목 | 내용 |
 |------|------|------|
-| 2026-02-09 | 노트 목록 페이지네이션 | 보기 개수(1/3/5/7/10개·전체) 선택, 페이지 번호로 이동. 9페이지 초과 시 첫·마지막·현재 주변만 표시. |
-| 2026-02-09 | 대시보드 학습 통계 | 상단 4개 카드: 총 노트, 수업 자료 링크, 프로젝트, 공부 시간. 수업 자료·프로젝트 카드 클릭 시 해당 페이지 이동. |
-| 2026-02-09 | 공부 시간 | sessionStorage로 세션 시작 시각 저장. |
-| 2026-02-09 | 그래프 뷰 터치 | 모바일에서 한 손가락 드래그로 그래프 패닝. touchstart/touchmove/touchend 처리. |
-| 2026-02-09 | README 업데이트 | 업데이트 목차 섹션 추가. 기능·최근 변경 사항 반영. |
+| 2026-02-09 | 노트 목록 페이지네이션 | 보기 개수(1/3/5/7/10개·전체) 선택, 이전/다음·페이지 번호로 이동. 9페이지 초과 시 첫·마지막·현재±2만 표시(예: 1 … 4 5 6 7 … 20). |
+| 2026-02-09 | 대시보드 학습 통계 | 상단 4개 카드: 총 노트, 수업 자료 링크, 프로젝트, 공부 시간. 수업 자료·프로젝트 카드 클릭 시 해당 페이지 이동. 서버·포커스 시 개수 갱신. |
+| 2026-02-09 | 공부 시간 | sessionStorage로 세션 시작 시각 저장. 다른 페이지 갔다 와도 같은 탭에서 누적. |
+| 2026-02-09 | 그래프 뷰 터치 | 모바일에서 한 손가락 드래그로 그래프 패닝. touchstart/touchmove(passive:false)/touchend. 노드/링크 영역은 패닝 제외. |
+| 2026-02-09 | README 전체 업데이트 | 업데이트 목차·사이트 개요·제공 기능·디렉터리 구조·라우팅·API 경로 등 모든 섹션 최신화. |
 
 ---
 
 ## 1. 사이트 개요
 
 - **이름**: Study Notes Summarizer  
-- **역할**: 수업/공부 내용을 텍스트·마크다운으로 업로드하면, LLM으로 자동 요약해 주고 검색·카테고리·프로젝트·링크로 정리할 수 있는 웹 앱입니다.
+- **역할**: 수업/공부 내용을 텍스트·마크다운으로 업로드하면, LLM으로 자동 요약해 주고 검색·카테고리·프로젝트·링크로 정리할 수 있는 웹 앱입니다. 대시보드 학습 통계·페이지네이션·공부 시간 기록, 모바일 그래프 터치 지원을 포함합니다.
+- **URL**: https://web-study-notes-summarizer.vercel.app
 - **기술 스택**
   - **프론트**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS
   - **백엔드**: Next.js API Routes (Route Handlers)
@@ -58,7 +59,7 @@ https://web-study-notes-summarizer.vercel.app
 ## 3. 디렉터리 구조
 
 ```
-Study-CURSOR/
+Study-Notes-summarizer/
 ├── app/                          # Next.js App Router
 │   ├── layout.tsx                # 루트 레이아웃 (폰트, 테마 스크립트, globals.css)
 │   ├── page.tsx                  # / → 로그인 여부에 따라 /auth/login 또는 /dashboard
@@ -73,24 +74,24 @@ Study-CURSOR/
 │   │       ├── page.tsx          # 가입 승인 페이지 (서버)
 │   │       └── admin-approvals-client.tsx
 │   ├── dashboard/                # 대시보드 및 하위 화면
-│   │   ├── page.tsx              # 메인 대시보드 (노트 목록, 업로드, 필터)
-│   │   ├── dashboard-client.tsx  # 대시보드 클라이언트 (상태, 검색, 사이드바 연동)
+│   │   ├── page.tsx              # 메인 대시보드 (notes, categories, linksCount, projectsCount 조회)
+│   │   ├── dashboard-client.tsx  # 클라이언트 (학습 통계, 검색, 보기/정렬, 페이지네이션, 노트 목록)
 │   │   ├── error.tsx
-│   │   ├── notes/[id]/           # 노트 상세
-│   │   ├── projects/             # 프로젝트 목록·상세
-│   │   ├── compare/              # 두 노트 비교
-│   │   ├── graph/                # 그래프 뷰
-│   │   └── links/                # 스터디 링크
+│   │   ├── notes/[id]/           # 노트 상세 (page.tsx, note-detail-client.tsx)
+│   │   ├── projects/             # 프로젝트 목록(page.tsx, projects-client.tsx)·상세([id]/)
+│   │   ├── compare/              # 두 노트 비교 (page.tsx, compare-client.tsx)
+│   │   ├── graph/                # 그래프 뷰 (page.tsx, graph-view-client.tsx, 모바일 터치 지원)
+│   │   └── links/                # 수업 자료 링크 (page.tsx, links-client.tsx)
 │   └── api/                      # API Route Handlers
 │       ├── auth/auto-approve-if-admin/route.ts
 │       ├── admin/approve/route.ts
 │       ├── admin/pending-users/route.ts
 │       ├── notes/[id]/route.ts   # 노트 GET/PATCH/DELETE
-│       ├── search/route.ts       # 검색
+│       ├── search/route.ts       # 노트 내용 검색
 │       ├── summarize/route.ts    # 요약 생성
 │       └── summarize/retry/route.ts
 ├── components/                   # 공통 UI 컴포넌트
-│   ├── sidebar.tsx
+│   ├── sidebar.tsx               # 사이드바 (전체 노트, 오늘, 그래프, 링크, 프로젝트, 캘린더)
 │   ├── sidebar-categories.tsx
 │   ├── calendar-notes.tsx
 │   ├── file-upload.tsx
@@ -111,10 +112,19 @@ Study-CURSOR/
 ├── types/
 │   └── index.ts                  # Note, Category, Project, StudyLink, NOTE_STATUS_CONFIG 등
 ├── supabase/
-│   └── migrations/               # DB 마이그레이션 (순서대로 적용)
+│   └── migrations/               # DB 마이그레이션 (001~011 순서 적용)
+├── scripts/
+│   └── check-env-not-staged.js   # .env.local이 Git에 스테이징되지 않았는지 확인 (npm run check:env)
 ├── public/                       # 정적 파일 (로고, 아이콘)
 ├── middleware.ts                 # 인증 체크, /dashboard·/admin 접근 시 로그인 리다이렉트
 └── docs/                         # 설정·문제해결 가이드
+    ├── ENV_SECURITY.md
+    ├── GIT_SETUP_GUIDE.md
+    ├── SETUP.md
+    ├── VERCEL_DEPLOYMENT.md
+    ├── Storage_오류_해결_가이드.md
+    ├── 로그인_오류_해결_가이드.md
+    └── TEST_CHECKLIST.md
 ```
 
 ---
@@ -130,13 +140,13 @@ Study-CURSOR/
 | `/` | 로그인되어 있으면 `/dashboard`로 이동, 아니면 `/auth/login`으로 이동 |
 | `/auth/login` | 로그인 페이지 |
 | `/auth/signup` | 회원가입 페이지 |
-| `/dashboard` | 메인 대시보드 (노트 목록, 업로드, 필터, 검색). `?date=`, `?category=` 로 날짜/카테고리 필터 가능 |
+| `/dashboard` | 메인 대시보드. 학습 통계(총 노트·수업 자료·프로젝트·공부 시간), 업로드, 검색, 보기(1/3/5/7/10·전체)·정렬, 페이지네이션, 노트 목록. `?date=`, `?category=` 로 날짜/카테고리 필터 |
 | `/dashboard/notes/[id]` | 노트 하나 상세 보기 |
 | `/dashboard/projects` | 프로젝트 목록 |
 | `/dashboard/projects/[id]` | 프로젝트 하나 상세 보기 |
-| `/dashboard/compare` | 두 노트 비교 (쿼리로 두 노트 ID 지정) |
-| `/dashboard/graph` | 그래프 뷰 |
-| `/dashboard/links` | 스터디 링크 목록 |
+| `/dashboard/compare` | 두 노트 비교. `?id1=노트ID&id2=노트ID` 로 비교 대상 지정 |
+| `/dashboard/graph` | 그래프 뷰 (노트·카테고리·날짜·키워드 시각화). PC 마우스·휠, 모바일 터치 패닝 |
+| `/dashboard/links` | 수업 자료 링크 목록 |
 | `/admin/approvals` | 관리자 전용 가입 승인 페이지 (이메일 있는 사용자만 목록에 표시) |
 
 ### 4.2 API 경로 — 화면이 아니라 서버와 데이터를 주고받을 때 쓰는 주소
@@ -145,10 +155,12 @@ Study-CURSOR/
 
 | 메서드 | 경로 | 용도 |
 |--------|------|------|
-| GET | `/api/search?q=...` | 노트 내용 검색 |
-| POST | `/api/summarize` | 업로드된 파일 기준으로 요약 생성 |
+| GET | `/api/search?q=검색어` | 노트 제목·파일 내용 검색 (2글자 이상) |
+| POST | `/api/summarize` | 업로드된 파일 기준으로 요약 생성. Body: `{ filePath, fileName }` |
 | POST | `/api/summarize/retry` | 요약 재시도 |
-| GET / PATCH / DELETE | `/api/notes/[id]` | 노트 조회 / 수정 / 삭제 |
+| GET | `/api/notes/[id]` | 노트 조회 |
+| PATCH | `/api/notes/[id]` | 노트 수정 (category_id, project_id 등) |
+| DELETE | `/api/notes/[id]` | 노트 삭제 |
 | GET | `/api/admin/pending-users` | 승인 대기 사용자 목록 (이메일 있는 사람만) |
 | POST | `/api/admin/approve` | 사용자 승인 처리 |
 | GET | `/api/auth/auto-approve-if-admin` | 관리자 이메일이면 자동 승인 |
@@ -211,7 +223,7 @@ DB 구조는 `supabase/migrations/` 안의 SQL 파일을 **번호 순서(001 →
 
 - **서버 쪽**  
   `app/**/page.tsx` 에서 `@/lib/supabase/server` 의 `createClient()` 로 사용자 확인 후, 노트·카테고리 등을 DB에서 조회해 **초기 데이터를 props 로** 자식 컴포넌트에 넘깁니다.  
-  예: `app/dashboard/page.tsx` — 로그인·승인 체크 후 notes/categories 조회하고, `DashboardClient` 에 `initialNotes`, `initialCategories` 등 전달.
+  예: `app/dashboard/page.tsx` — 로그인·승인 체크 후 notes, categories, study_links 개수, projects 개수를 조회하고, `DashboardClient` 에 `initialNotes`, `initialCategories`, `initialLinksCount`, `initialProjectsCount` 전달.
 
 - **클라이언트 쪽**  
   `'use client'` 가 붙은 파일(예: `*-client.tsx`)에서 **검색, 필터, 업로드, 사이드바, 실시간 구독** 등 사용자와 상호작용하는 부분을 처리합니다. `@/lib/supabase/client` 를 사용합니다.  
