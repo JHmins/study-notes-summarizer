@@ -279,7 +279,7 @@ export default function NoteDetailClient({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full max-w-3xl min-w-0 flex-1 px-4 py-8 sm:px-6 overflow-x-hidden">
         <nav className="mb-6 flex items-center justify-between">
           <Link
             href="/dashboard"
@@ -514,7 +514,7 @@ export default function NoteDetailClient({
 
           {/* 요약 블록 - 마크다운 렌더링 + .md 다운로드 */}
           {activeBlock === 'summary' && (
-            <section className="mt-6">
+            <section className="mt-6 min-w-0 overflow-x-hidden">
               {currentNote.summary ? (
                 <>
                   <div className="mb-4 flex justify-end">
@@ -534,7 +534,7 @@ export default function NoteDetailClient({
                       요약 .md 다운로드
                     </button>
                   </div>
-                  <div className="summary-markdown rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 text-[var(--foreground)] [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:first:mt-0 [&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-medium [&_ul]:list-disc [&_ul]:pl-6 [&_li]:my-1 [&_p]:my-2 [&_a]:text-[var(--accent)] [&_a]:underline [&_a]:break-all [&_strong]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--border)] [&_blockquote]:pl-4 [&_blockquote]:text-[var(--foreground-muted)]">
+                  <div className="summary-markdown min-w-0 break-words overflow-x-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 text-[var(--foreground)] [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:first:mt-0 [&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-medium [&_ul]:list-disc [&_ul]:pl-6 [&_li]:my-1 [&_p]:my-2 [&_a]:text-[var(--accent)] [&_a]:underline [&_a]:break-all [&_strong]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--border)] [&_blockquote]:pl-4 [&_blockquote]:text-[var(--foreground-muted)] [&_code]:break-all">
                     <SimpleMarkdown>{currentNote.summary}</SimpleMarkdown>
                   </div>
                 </>
@@ -593,7 +593,7 @@ export default function NoteDetailClient({
                     spellCheck={false}
                   />
                 ) : (
-                  <div className="origin-block max-h-[60vh] overflow-auto p-4 text-[var(--foreground-muted)] whitespace-pre-wrap">
+                  <div className="origin-block max-h-[60vh] overflow-auto p-4 text-[var(--foreground-muted)] whitespace-pre-wrap break-words overflow-x-hidden">
                     {originContent || '파일을 불러올 수 없습니다.'}
                   </div>
                 )}

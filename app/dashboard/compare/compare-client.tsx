@@ -125,12 +125,6 @@ export default function CompareClient({
     if (!categoryId) return null
     return categories.find((c) => c.id === categoryId)?.name || null
   }
-  // 여러 카테고리 이름 (category_ids 반영)
-  const getCategoryNames = (note: { category_ids?: string[]; category_id?: string | null }) => {
-    const ids = note.category_ids ?? (note.category_id ? [note.category_id] : [])
-    if (ids.length === 0) return null
-    return ids.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean).join(', ') || null
-  }
 
   return (
     <div className="h-screen flex bg-[var(--background)] overflow-hidden relative">
@@ -211,11 +205,17 @@ export default function CompareClient({
                     전체 보기
                   </Link>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-[var(--foreground-subtle)]">
-                  <span>{format(new Date(note1.created_at), 'yyyy.M.d HH:mm', { locale: ko })}</span>
-                  {getCategoryNames(note1) && (
-                    <span className="rounded-full bg-[var(--surface-hover)] px-2 py-0.5">{getCategoryNames(note1)}</span>
-                  )}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--foreground-subtle)]">
+                  <span className="shrink-0">{format(new Date(note1.created_at), 'yyyy.M.d HH:mm', { locale: ko })}</span>
+                  {(note1.category_ids ?? (note1.category_id ? [note1.category_id] : [])).map((cid) => {
+                    const name = getCategoryName(cid)
+                    if (!name) return null
+                    return (
+                      <span key={cid} className="inline-flex shrink-0 rounded-full bg-[var(--surface-hover)] px-2 py-0.5" title={name}>
+                        {name}
+                      </span>
+                    )
+                  })}
                 </div>
               </div>
               <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--surface-hover)] px-4 py-2">
@@ -244,8 +244,8 @@ export default function CompareClient({
                   </button>
                 </div>
               </div>
-              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain">
-                <div className="p-4 sm:p-6">
+              <div className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain">
+                <div className="p-4 sm:p-6 min-w-0 break-words">
                   {activeBlock1 === 'summary' ? (
                     note1.summary ? (
                       <SimpleMarkdown>{note1.summary}</SimpleMarkdown>
@@ -255,7 +255,7 @@ export default function CompareClient({
                       </div>
                     )
                   ) : (
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground)] font-mono">
+                    <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--foreground)] font-mono">
                       {fileContent1 || '파일 내용을 불러올 수 없습니다.'}
                     </div>
                   )}
@@ -280,11 +280,17 @@ export default function CompareClient({
                     전체 보기
                   </Link>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-[var(--foreground-subtle)]">
-                  <span>{format(new Date(note2.created_at), 'yyyy.M.d HH:mm', { locale: ko })}</span>
-                  {getCategoryNames(note2) && (
-                    <span className="rounded-full bg-[var(--surface-hover)] px-2 py-0.5">{getCategoryNames(note2)}</span>
-                  )}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-[var(--foreground-subtle)]">
+                  <span className="shrink-0">{format(new Date(note2.created_at), 'yyyy.M.d HH:mm', { locale: ko })}</span>
+                  {(note2.category_ids ?? (note2.category_id ? [note2.category_id] : [])).map((cid) => {
+                    const name = getCategoryName(cid)
+                    if (!name) return null
+                    return (
+                      <span key={cid} className="inline-flex shrink-0 rounded-full bg-[var(--surface-hover)] px-2 py-0.5" title={name}>
+                        {name}
+                      </span>
+                    )
+                  })}
                 </div>
               </div>
               <div className="flex-shrink-0 border-b border-[var(--border)] bg-[var(--surface-hover)] px-4 py-2">
@@ -313,8 +319,8 @@ export default function CompareClient({
                   </button>
                 </div>
               </div>
-              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain">
-                <div className="p-4 sm:p-6">
+              <div className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden overscroll-contain">
+                <div className="p-4 sm:p-6 min-w-0 break-words">
                   {activeBlock2 === 'summary' ? (
                     note2.summary ? (
                       <SimpleMarkdown>{note2.summary}</SimpleMarkdown>
@@ -324,7 +330,7 @@ export default function CompareClient({
                       </div>
                     )
                   ) : (
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--foreground)] font-mono">
+                    <div className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[var(--foreground)] font-mono">
                       {fileContent2 || '파일 내용을 불러올 수 없습니다.'}
                     </div>
                   )}

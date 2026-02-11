@@ -24,6 +24,7 @@ export default function SimpleMarkdown({ children }: { children: string }) {
     while (rest.length) {
       const bold = rest.match(/^\*\*(.+?)\*\*/)
       const link = rest.match(/^\[([^\]]+)\]\(([^)]+)\)/)
+      const code = rest.match(/^`([^`]*)`/)
       if (bold) {
         parts.push(<strong key={parts.length}>{bold[1]}</strong>)
         rest = rest.slice(bold[0].length)
@@ -34,8 +35,15 @@ export default function SimpleMarkdown({ children }: { children: string }) {
           </a>
         )
         rest = rest.slice(link[0].length)
+      } else if (code) {
+        parts.push(
+          <code key={parts.length} className="break-all rounded bg-[var(--surface-hover)] px-1 font-mono text-sm">
+            {code[1]}
+          </code>
+        )
+        rest = rest.slice(code[0].length)
       } else {
-        const next = rest.search(/\*\*|\[/)
+        const next = rest.search(/\*\*|\[|`/)
         if (next === -1) {
           parts.push(rest)
           rest = ''
@@ -78,5 +86,9 @@ export default function SimpleMarkdown({ children }: { children: string }) {
     }
   }
   flushList()
-  return <div className="summary-markdown">{out}</div>
+  return (
+    <div className="summary-markdown min-w-0 break-words overflow-x-hidden [&_p]:break-words [&_li]:break-words [&_h2]:break-words [&_h3]:break-words [&_blockquote]:break-words">
+      {out}
+    </div>
+  )
 }

@@ -645,7 +645,8 @@ export default function DashboardClient({ initialNotes, initialCategories, initi
                             </div>
                             {note && (
                               <span
-                                className={`shrink-0 self-start rounded-full px-2.5 py-1 text-xs font-medium ${NOTE_STATUS_CONFIG[note.status].className}`}
+                                className={`shrink-0 self-start rounded-full px-1.5 py-0.5 text-[10px] font-medium sm:px-2.5 sm:py-1 sm:text-xs ${NOTE_STATUS_CONFIG[note.status].className}`}
+                                title={NOTE_STATUS_CONFIG[note.status].label}
                               >
                                 {NOTE_STATUS_CONFIG[note.status].label}
                               </span>
@@ -694,11 +695,11 @@ export default function DashboardClient({ initialNotes, initialCategories, initi
               ) : (
               <>
                 {selectedNotes.size === 2 && (
-                  <div className="mb-4 flex items-center justify-between rounded-xl border border-[var(--accent)] bg-[var(--accent-muted)]/30 px-4 py-3">
-                    <span className="text-sm font-medium text-[var(--accent)]">
+                  <div className="mb-4 flex flex-col gap-3 rounded-xl border border-[var(--accent)] bg-[var(--accent-muted)]/30 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+                    <span className="shrink-0 text-sm font-medium text-[var(--accent)]">
                       {selectedNotes.size}개의 노트가 선택되었습니다
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex shrink-0 items-center justify-end gap-2 sm:justify-end">
                       <button
                         type="button"
                         onClick={() => {
@@ -707,14 +708,14 @@ export default function DashboardClient({ initialNotes, initialCategories, initi
                             window.location.href = `/dashboard/compare?id1=${ids[0]}&id2=${ids[1]}`
                           }
                         }}
-                        className="rounded-lg bg-[var(--accent)] px-4 py-1.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+                        className="whitespace-nowrap rounded-lg bg-[var(--accent)] px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
                       >
                         비교하기
                       </button>
                       <button
                         type="button"
                         onClick={() => setSelectedNotes(new Set())}
-                        className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
+                        className="whitespace-nowrap rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
                       >
                         선택 취소
                       </button>
@@ -726,104 +727,117 @@ export default function DashboardClient({ initialNotes, initialCategories, initi
                     const isSelected = selectedNotes.has(note.id)
                     return (
                       <li key={note.id}>
-                        <div className={`group flex items-center gap-3 rounded-xl border ${
+                        <div className={`group flex flex-col gap-3 rounded-xl border ${
                           isSelected ? 'border-[var(--accent)] bg-[var(--accent-muted)]/20' : 'border-[var(--border)] bg-[var(--surface)]'
-                        } p-4 shadow-card transition-shadow hover:border-[var(--border-focus)] hover:shadow-card-hover sm:p-5`}>
-                          <label
-                            className={`flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-md border-2 transition-[border-color,background-color,box-shadow] duration-200 focus-within:ring-2 focus-within:ring-[var(--accent)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--surface)] ${
-                              isSelected
-                                ? 'border-[var(--accent)] bg-[var(--accent)]'
-                                : 'border-[var(--border)] bg-transparent hover:border-[var(--foreground-subtle)]'
-                            }`}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={(e) => {
-                                const newSelected = new Set(selectedNotes)
-                                if (e.target.checked) {
-                                  if (newSelected.size >= 2) {
-                                    alert('최대 2개의 노트만 선택할 수 있습니다.')
-                                    return
-                                  }
-                                  newSelected.add(note.id)
-                                } else {
-                                  newSelected.delete(note.id)
-                                }
-                                setSelectedNotes(newSelected)
-                              }}
-                              className="sr-only"
-                              aria-label="비교용으로 선택"
-                            />
-                            {isSelected && (
-                              <svg className="h-3 w-3 text-white pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                                <path d="M5 13l4 4L19 7" />
-                              </svg>
-                            )}
-                          </label>
-                          <Link
-                            href={`/dashboard/notes/${note.id}`}
-                            className="min-w-0 flex-1"
-                          >
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                              <div className="min-w-0 flex-1">
-                                <h3 className="truncate text-base font-semibold text-[var(--foreground)] group-hover:text-[var(--accent)] sm:text-lg">
+                        } p-4 shadow-card transition-shadow hover:border-[var(--border-focus)] hover:shadow-card-hover sm:flex-row sm:items-center sm:gap-3 sm:p-5`}>
+                          {/* 모바일: 위쪽에 제목·날짜·요약, 아래쪽에 액션 → 가독성 확보. 체크박스는 제목과 같은 줄 */}
+                          <div className="flex min-w-0 flex-1 flex-col gap-3 sm:min-w-0 sm:flex-1">
+                            {/* 제목 줄: 체크박스 + 제목 + 상태 칩 + 즐겨찾기 (한 줄 정렬) */}
+                            <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                              <label
+                                className={`flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-md border-2 transition-[border-color,background-color,box-shadow] duration-200 focus-within:ring-2 focus-within:ring-[var(--accent)] focus-within:ring-offset-2 focus-within:ring-offset-[var(--surface)] ${
+                                  isSelected
+                                    ? 'border-[var(--accent)] bg-[var(--accent)]'
+                                    : 'border-[var(--border)] bg-transparent hover:border-[var(--foreground-subtle)]'
+                                }`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={(e) => {
+                                    const newSelected = new Set(selectedNotes)
+                                    if (e.target.checked) {
+                                      if (newSelected.size >= 2) {
+                                        alert('최대 2개의 노트만 선택할 수 있습니다.')
+                                        return
+                                      }
+                                      newSelected.add(note.id)
+                                    } else {
+                                      newSelected.delete(note.id)
+                                    }
+                                    setSelectedNotes(newSelected)
+                                  }}
+                                  className="sr-only"
+                                  aria-label="비교용으로 선택"
+                                />
+                                {isSelected && (
+                                  <svg className="h-3 w-3 text-white pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                    <path d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </label>
+                              <Link
+                                href={`/dashboard/notes/${note.id}`}
+                                className="min-w-0 flex-1"
+                              >
+                                <h3 className="break-words text-base font-semibold text-[var(--foreground)] group-hover:text-[var(--accent)] sm:truncate sm:text-lg">
                                   {note.title}
                                 </h3>
-                                <p className="mt-0.5 text-sm text-[var(--foreground-subtle)]">
+                              </Link>
+                              <span
+                                className={`w-fit shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium sm:px-2.5 sm:py-1 sm:text-xs ${NOTE_STATUS_CONFIG[note.status].className}`}
+                                title={NOTE_STATUS_CONFIG[note.status].label}
+                              >
+                                {NOTE_STATUS_CONFIG[note.status].label}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={async (e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  const next = !note.is_favorite
+                                  setNotes((prev) => prev.map((n) => (n.id === note.id ? { ...n, is_favorite: next } : n)))
+                                  setFavoriteUpdatingId(note.id)
+                                  const res = await fetch(`/api/notes/${note.id}`, {
+                                    method: 'PATCH',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ is_favorite: next }),
+                                  })
+                                  setFavoriteUpdatingId(null)
+                                  if (!res.ok) {
+                                    setNotes((prev) => prev.map((n) => (n.id === note.id ? { ...n, is_favorite: note.is_favorite } : n)))
+                                    const data = await res.json().catch(() => ({}))
+                                    alert(data.error || '즐겨찾기 변경에 실패했습니다.')
+                                  }
+                                }}
+                                disabled={favoriteUpdatingId === note.id}
+                                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors disabled:opacity-60 ${
+                                  note.is_favorite
+                                    ? 'text-amber-500 hover:bg-amber-500/10'
+                                    : 'text-[var(--foreground-subtle)] hover:bg-[var(--surface-hover)] hover:text-amber-500/80'
+                                }`}
+                                aria-label={note.is_favorite ? '즐겨찾기 해제' : '즐겨찾기'}
+                                title={note.is_favorite ? '즐겨찾기 해제' : '즐겨찾기'}
+                              >
+                                <svg className="h-4 w-4" fill={note.is_favorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                </svg>
+                              </button>
+                            </div>
+                            {/* 날짜·요약 (클릭 시 노트 상세로 이동) */}
+                            <Link
+                              href={`/dashboard/notes/${note.id}`}
+                              className="block min-w-0"
+                            >
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm text-[var(--foreground-subtle)]">
                                   {format(new Date(note.created_at), 'yyyy.M.d HH:mm', { locale: ko })}
                                 </p>
                                 {note.summary && (
-                                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--foreground-muted)]">
+                                  <p className="mt-2 line-clamp-2 break-words text-sm leading-relaxed text-[var(--foreground-muted)]">
                                     {note.summary.replace(/^#+\s*/gm, '').replace(/\n+/g, ' ').trim().slice(0, 200)}
                                     {note.summary.length > 200 ? '…' : ''}
                                   </p>
                                 )}
                               </div>
-                              <span
-                                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${NOTE_STATUS_CONFIG[note.status].className}`}
-                              >
-                                {NOTE_STATUS_CONFIG[note.status].label}
-                              </span>
-                            </div>
-                          </Link>
+                            </Link>
+                          </div>
                           <div
-                            className="flex shrink-0 items-center gap-2"
+                            className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-3 sm:shrink-0 sm:border-0 sm:pt-0"
                             onClick={(e) => e.preventDefault()}
                           >
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                const next = !note.is_favorite
-                                setNotes((prev) => prev.map((n) => (n.id === note.id ? { ...n, is_favorite: next } : n)))
-                                setFavoriteUpdatingId(note.id)
-                                const res = await fetch(`/api/notes/${note.id}`, {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ is_favorite: next }),
-                                })
-                                setFavoriteUpdatingId(null)
-                                if (!res.ok) {
-                                  setNotes((prev) => prev.map((n) => (n.id === note.id ? { ...n, is_favorite: note.is_favorite } : n)))
-                                  const data = await res.json().catch(() => ({}))
-                                  alert(data.error || '즐겨찾기 변경에 실패했습니다.')
-                                }
-                              }}
-                              disabled={favoriteUpdatingId === note.id}
-                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors disabled:opacity-60 ${
-                                note.is_favorite
-                                  ? 'text-amber-500 hover:bg-amber-500/10'
-                                  : 'text-[var(--foreground-subtle)] hover:bg-[var(--surface-hover)] hover:text-amber-500/80'
-                              }`}
-                              aria-label={note.is_favorite ? '즐겨찾기 해제' : '즐겨찾기'}
-                              title={note.is_favorite ? '즐겨찾기 해제' : '즐겨찾기'}
-                            >
-                              <svg className="h-4 w-4" fill={note.is_favorite ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                              </svg>
-                            </button>
-                            <div className="flex min-w-0 max-w-[220px] flex-wrap items-center gap-1.5">
+                            <div className="flex min-w-0 max-w-full flex-wrap items-center gap-1.5 sm:max-w-[220px]">
                               {(note.category_ids ?? (note.category_id ? [note.category_id] : [])).map((cid) => {
                                 const cat = categories.find((c) => c.id === cid)
                                 return (
