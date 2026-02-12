@@ -210,6 +210,26 @@ export default function DashboardClient({ initialNotes, initialCategories, initi
     if (projectsRes.count != null) setProjectsCount(projectsRes.count)
   }, [user.id])
 
+  // 마운트 시 목록 새로 불러오기 (뒤로 가기 등으로 돌아왔을 때 최신 업로드·삭제 반영)
+  useEffect(() => {
+    refreshNotes()
+    refreshCategories()
+    refreshCounts()
+  }, [refreshNotes, refreshCategories, refreshCounts])
+
+  // bfcache(뒤로가기 캐시) 복원 시 목록 다시 불러오기
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        refreshNotes()
+        refreshCategories()
+        refreshCounts()
+      }
+    }
+    window.addEventListener('pageshow', onPageShow)
+    return () => window.removeEventListener('pageshow', onPageShow)
+  }, [refreshNotes, refreshCategories, refreshCounts])
+
   // 탭/창 포커스 시 목록 다시 불러오기 (삭제·업로드가 다른 탭에서 되었을 때)
   useEffect(() => {
     const onFocus = () => {

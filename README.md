@@ -1,4 +1,4 @@
-# Study Notes Summarizer (V5.4)
+# Study Notes Summarizer (V5.5)
 
 https://web-study-notes-summarizer.vercel.app
 
@@ -13,6 +13,7 @@ https://web-study-notes-summarizer.vercel.app
 
 | 버전 | 날짜 | 항목 | 내용 |
 |------|------|------|------|
+| V5.5 | 2026-02-12 | 목록 불러오기 개선 | 대시보드 컴포넌트가 마운트될 때와 뒤로 가기 캐시(cache)로 페이지를 복원할 때 목록들을 다시 불러오는 사항 개선. |
 | V5.4 | 2026-02-12 | LLM 프롬포트 개선 | LLM이 의도를 더욱 정확히 파악할 수 있도록 컨텍스트 주입 방식과 제약 조건을 고도화. |
 
 ---
